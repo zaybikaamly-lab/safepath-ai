@@ -98,8 +98,10 @@ function listenForAgentResponses(
   return new Promise((resolve, reject) => {
     const responses: AgentMessage[] = [];
     let wsConnected = false;
+    let ws: any;
+
     const timeout = setTimeout(() => {
-      ws.close();
+      if (ws) ws.close();
       if (responses.length > 0) {
         resolve(responses);
       } else {
@@ -107,18 +109,16 @@ function listenForAgentResponses(
       }
     }, timeoutMs);
 
-    const ws = band.connectWebSocket((event: any) => {
+    ws = band.connectWebSocket((event: any) => {
       wsConnected = true;
 
-      // Listen for message_created events
       if (event.type === 'message_created' && event.data?.sender) {
         const sender = event.data.sender.handle || event.data.sender.name;
         const content = event.data.content;
 
-        // Determine which agent sent this
         let agentName = 'unknown';
         for (const [key, agent] of Object.entries(AGENTS)) {
-          if (sender.includes(key) || agent.handle === sender) {
+          if (sender.includes(key) || (agent as any).handle === sender) {
             agentName = key;
             break;
           }
@@ -134,7 +134,6 @@ function listenForAgentResponses(
         onMessage(msg);
       }
 
-      // Check if coordinator has responded (end of sequence)
       if (event.type === 'message_created' && event.data?.sender?.handle?.includes('coordinator')) {
         setTimeout(() => {
           ws.close();
@@ -144,9 +143,8 @@ function listenForAgentResponses(
       }
     });
 
-    // Fallback: close after timeout
     setTimeout(() => {
-      if (wsConnected) {
+      if (wsConnected && ws) {
         ws.close();
         clearTimeout(timeout);
         resolve(responses);
