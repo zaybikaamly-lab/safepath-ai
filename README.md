@@ -4,7 +4,7 @@ A multi-agent disaster response and evacuation assistant. Built with Next.js, Le
 
 ## Architecture
 
-Seven specialized AI agents collaborate in sequence:
+Seven  specialized AI agents collaborate in sequence:
 
 ```
 User Situation + Live Weather
