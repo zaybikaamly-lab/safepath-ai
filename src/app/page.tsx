@@ -285,7 +285,6 @@ export default function HomePage() {
                   color: rightTab === tab ? '#00D4FF' : '#3A5A7A',
                   borderBottom: rightTab === tab ? '2px solid #00D4FF' : '2px solid transparent',
                   background: 'none', border: 'none',
-                  borderBottom: rightTab === tab ? '2px solid #00D4FF' : '2px solid transparent',
                 }}>
                 {tab === 'whatif' ? 'WHAT-IF' : 'ACTION PLAN'}
               </button>
